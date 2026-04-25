@@ -1,1 +1,1 @@
-// TODO: implement
+export const TEAL = '#14b8a6';
