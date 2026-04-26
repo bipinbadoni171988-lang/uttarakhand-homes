@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 import React, { useState, useEffect, useRef } from 'react';
 import {
   View, Text, StyleSheet, TouchableOpacity, ScrollView,
@@ -663,7 +663,7 @@ function MainTabs() {
     </Tab.Navigator>
   );
 }
-=======
+
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
 import auth from '@react-native-firebase/auth';
@@ -678,11 +678,10 @@ import SplashScreen from './src/components/SplashScreen';
 import { COLORS } from './src/constants/theme';
 
 const Stack = createStackNavigator();
->>>>>>> 902490acad43c647976c8c03bf85fbabf67f5c23
+902490acad43c647976c8c03bf85fbabf67f5c23
 
 // ─── ROOT ─────────────────────────────────────────────────────────────────────
 export default function App() {
-<<<<<<< HEAD
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -691,7 +690,7 @@ export default function App() {
         <Stack.Screen name="Register" component={RegisterScreen} />
         <Stack.Screen name="OTP" component={OTPScreen} />
         <Stack.Screen name="Main" component={MainTabs} />
-=======
+
   const [authUser, setAuthUser] = useState(null);
   const [profileChecked, setProfileChecked] = useState(false);
   const [needsProfile, setNeedsProfile] = useState(false);
@@ -749,7 +748,7 @@ export default function App() {
         ) : (
           <Stack.Screen name="App" component={MainTabs} />
         )}
->>>>>>> 902490acad43c647976c8c03bf85fbabf67f5c23
+902490acad43c647976c8c03bf85fbabf67f5c23
       </Stack.Navigator>
     </NavigationContainer>
   );
