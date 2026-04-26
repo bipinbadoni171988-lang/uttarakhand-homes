@@ -1,29 +1,11 @@
 {
   "expo": {
-    "name": "uttarakhand-homes",
-    "slug": "uttarakhand-homes",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "name": "Nestup",
+    "slug": "nestup",
     "splash": {
-      "image": "./assets/splash-icon.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "edgeToEdgeEnabled": true
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
+      "image": "./assets/nestup-splash.png",
+      "backgroundColor": "#1a6b5a",
+      "resizeMode": "contain"
     }
   }
 }
