@@ -1,309 +1,138 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Easing, StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, FlatList, SafeAreaView } from 'react-native';
 
-export default function HomeScreen() {
-  const pulseOpacity = useRef(new Animated.Value(1)).current;
+const TP = [
+  { id: '1', title: '3BHK House Dehradun', price: '45L', loc: 'Rajpur Road', type: 'sale' },
+  { id: '2', title: 'Commercial Shop', price: '85L', loc: 'Haridwar Market', type: 'sale' },
+  { id: '3', title: 'Villa Mussoorie', price: '98L', loc: 'Mussoorie', type: 'sale' },
+];
+const TR = [
+  { id: '1', title: 'Swift Dzire Car', price: '1200/day', loc: 'Dehradun', type: 'rental' },
+  { id: '2', title: 'Royal Enfield Bike', price: '800/day', loc: 'Rishikesh', type: 'rental' },
+  { id: '3', title: '1BHK Furnished Flat', price: '12K/month', loc: 'Rajpur Road', type: 'rental' },
+];
+const TS = [
+  { id: '1', title: 'Rajesh Kumar', price: '400/visit', loc: 'Plumber', type: 'service' },
+  { id: '2', title: 'Deepak Negi', price: '500/visit', loc: 'Electrician', type: 'service' },
+  { id: '3', title: 'Mohan Rawat', price: '200/sqft', loc: 'Painter', type: 'service' },
+];
 
-  useEffect(() => {
-    const pulseAnimation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(pulseOpacity, {
-          toValue: 0.6,
-          duration: 2000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(pulseOpacity, {
-          toValue: 1,
-          duration: 2000,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ])
-    );
-
-    pulseAnimation.start();
-
-    return () => {
-      pulseAnimation.stop();
-    };
-  }, [pulseOpacity]);
-
+function Card({ item }) {
+  const bg = item.type === 'sale' ? '#01696f' : item.type === 'rental' ? '#006494' : '#964219';
   return (
-    <View style={styles.container}>
-      <Animated.Text style={[styles.prompt, { opacity: pulseOpacity }]}>
-        What do you want to search today?
-      </Animated.Text>
-      <Text style={styles.subtext}>Explore homes, rentals, and local services.</Text>
-    </View>
+    <TouchableOpacity style={st.card}>
+      <View style={[st.cardTop, { backgroundColor: bg }]}>
+        <Text style={st.cardTitle}>{item.title}</Text>
+        <Text style={st.cardPrice}>{item.price}</Text>
+      </View>
+      <View style={st.cardBot}>
+        <Text style={st.cardLoc}>{item.loc}</Text>
+      </View>
+    </TouchableOpacity>
   );
 }
-import React, { useEffect, useState } from 'react';
-import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
-import { collection, onSnapshot } from 'firebase/firestore';
 
-import CategoryBanner from '../components/CategoryBanner';
-import TrendingCard from '../components/TrendingCard';
-import PermissionModal from '../components/PermissionModal';
-import usePermissions from '../hooks/usePermissions';
-import useLocation from '../hooks/useLocation';
-import { db } from '../../firebaseConfig';
-import { TEAL, TEAL_DARK, GOLD, BG, SB_HEIGHT } from '../constants/theme';
-
-const HomeScreen = ({ navigation }) => {
-  const [trendingProperties, setTrendingProperties] = useState([]);
-  const [trendingRentals, setTrendingRentals] = useState([]);
-  const [trendingServices, setTrendingServices] = useState([]);
-
-  useEffect(() => {
-    const loadTrending = async () => {
-      const [propertySnap, rentalSnap, serviceSnap] = await Promise.all([
-        getDocs(query(collection(db, 'properties'), limit(4))),
-        getDocs(query(collection(db, 'rentals'), limit(4))),
-        getDocs(query(collection(db, 'services'), limit(4)))
-      ]);
-
-      const propertyData = propertySnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      const rentalData = rentalSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-      const serviceData = serviceSnap.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
-
-      setTrendingProperties(propertyData.length ? propertyData : MOCK_PROPERTIES.slice(0, 4));
-      setTrendingRentals(rentalData.length ? rentalData : MOCK_RENTALS.slice(0, 4));
-      setTrendingServices(serviceData.length ? serviceData : MOCK_SERVICES.slice(0, 4));
-    };
-
-    loadTrending();
-  }, []);
-
-  return null;
-}
-  const permissionModalProps = usePermissions();
-  useLocation();
-
-  useEffect(() => {
-    const propertiesUnsubscribe = onSnapshot(collection(db, 'properties'), (snapshot) => {
-      const properties = snapshot.docs.slice(0, 4).map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTrendingProperties(properties);
-    });
-
-    const rentalsUnsubscribe = onSnapshot(collection(db, 'rentals'), (snapshot) => {
-      const rentals = snapshot.docs.slice(0, 4).map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTrendingRentals(rentals);
-    });
-
-    const servicesUnsubscribe = onSnapshot(collection(db, 'services'), (snapshot) => {
-      const services = snapshot.docs.slice(0, 4).map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
-      setTrendingServices(services);
-    });
-
-    return () => {
-      propertiesUnsubscribe();
-      rentalsUnsubscribe();
-      servicesUnsubscribe();
-    };
-  }, []);
-
+export default function HomeScreen({ navigation }) {
   return (
-    <>
-      <ScrollView style={styles.container} contentContainerStyle={styles.scrollContent}>
-        <View style={styles.headerSection}>
-          <View style={styles.logoRow}>
-            <Text style={styles.logoText}>🏔️</Text>
-            <Text style={styles.logoNest}>Nest</Text>
-            <Text style={styles.logoUp}>Up</Text>
+    <SafeAreaView style={st.safe}>
+      <ScrollView showsVerticalScrollIndicator={false}>
+        <View style={st.hdr}>
+          <Text style={st.greet}>Namaste 🙏</Text>
+          <Text style={st.tag}>What are you looking for today?</Text>
+        </View>
+
+        <View style={st.banners}>
+          <TouchableOpacity style={[st.ban, { backgroundColor: '#01696f' }]}
+            onPress={() => navigation && navigation.navigate('Properties')} activeOpacity={0.85}>
+            <Text style={st.emoji}>🏠</Text>
+            <View style={st.btxt}>
+              <Text style={st.btitle}>Property for Sale</Text>
+              <Text style={st.bsub}>Houses, Plots, Commercial</Text>
+            </View>
+            <View style={st.cta}><Text style={st.ctaTxt}>Browse</Text></View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[st.ban, { backgroundColor: '#006494' }]}
+            onPress={() => navigation && navigation.navigate('Rentals')} activeOpacity={0.85}>
+            <Text style={st.emoji}>🚗</Text>
+            <View style={st.btxt}>
+              <Text style={st.btitle}>Rentals</Text>
+              <Text style={st.bsub}>Cars, Bikes, Flats, Equipment</Text>
+            </View>
+            <View style={st.cta}><Text style={st.ctaTxt}>Browse</Text></View>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={[st.ban, { backgroundColor: '#964219' }]}
+            onPress={() => navigation && navigation.navigate('Services')} activeOpacity={0.85}>
+            <Text style={st.emoji}>🔧</Text>
+            <View style={st.btxt}>
+              <Text style={st.btitle}>Services</Text>
+              <Text style={st.bsub}>Plumbers, Electricians, Maids</Text>
+            </View>
+            <View style={st.cta}><Text style={st.ctaTxt}>Browse</Text></View>
+          </TouchableOpacity>
+        </View>
+
+        <View style={st.sec}>
+          <View style={st.secH}>
+            <Text style={st.secT}>🔥 Trending Properties</Text>
+            <TouchableOpacity onPress={() => navigation && navigation.navigate('Properties')}>
+              <Text style={st.seeAll}>See All</Text>
+            </TouchableOpacity>
           </View>
-
-          <Text style={styles.tagline}>Find your Nest in the Himalayas</Text>
-          <Text style={styles.greeting}>What do you want to search today?</Text>
+          <FlatList data={TP} horizontal showsHorizontalScrollIndicator={false}
+            keyExtractor={i => i.id} renderItem={({ item }) => <Card item={item} />} />
         </View>
 
-        <View style={styles.categoriesSection}>
-          <CategoryBanner
-            emoji="🏠"
-            title="Properties for Sale"
-            subtitle="Buy verified homes across Uttarakhand"
-            ctaText="Browse Properties →"
-            gradientFrom="#01696f"
-            onPress={() => navigation.navigate('Properties')}
-          />
-
-          <CategoryBanner
-            emoji="📦"
-            title="Rentals"
-            subtitle="Flats, bikes, tents & equipment for rent"
-            ctaText="Browse Rentals →"
-            gradientFrom="#1d6fbf"
-            onPress={() => navigation.navigate('Rentals')}
-          />
-
-          <CategoryBanner
-            emoji="🔧"
-            title="Services"
-            subtitle="Hire verified local professionals"
-            ctaText="Find Services →"
-            gradientFrom="#b45309"
-            onPress={() => navigation.navigate('Services')}
-          />
-        </View>
-
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>🔥 Trending Properties</Text>
-            <Pressable onPress={() => navigation.navigate('Properties')}>
-              <Text style={styles.seeAll}>See All →</Text>
-            </Pressable>
+        <View style={st.sec}>
+          <View style={st.secH}>
+            <Text style={st.secT}>🔥 Trending Rentals</Text>
+            <TouchableOpacity onPress={() => navigation && navigation.navigate('Rentals')}>
+              <Text style={st.seeAll}>See All</Text>
+            </TouchableOpacity>
           </View>
-
-          <FlatList
-            horizontal
-            data={trendingProperties}
-            keyExtractor={(item, index) => item?.id || `property-${index}`}
-            renderItem={({ item }) => <TrendingCard item={item} variant="property" />}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.listContent}
-          />
+          <FlatList data={TR} horizontal showsHorizontalScrollIndicator={false}
+            keyExtractor={i => i.id} renderItem={({ item }) => <Card item={item} />} />
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>📦 Trending Rentals</Text>
-            <Pressable onPress={() => navigation.navigate('Rentals')}>
-              <Text style={styles.seeAll}>See All →</Text>
-            </Pressable>
+        <View style={st.sec}>
+          <View style={st.secH}>
+            <Text style={st.secT}>🔥 Trending Services</Text>
+            <TouchableOpacity onPress={() => navigation && navigation.navigate('Services')}>
+              <Text style={st.seeAll}>See All</Text>
+            </TouchableOpacity>
           </View>
-
-          <FlatList
-            horizontal
-            data={trendingRentals}
-            keyExtractor={(item, index) => item?.id || `rental-${index}`}
-            renderItem={({ item }) => <TrendingCard item={item} variant="rental" />}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.listContent}
-          />
+          <FlatList data={TS} horizontal showsHorizontalScrollIndicator={false}
+            keyExtractor={i => i.id} renderItem={({ item }) => <Card item={item} />} />
         </View>
 
-        <View style={styles.section}>
-          <View style={styles.sectionHeader}>
-            <Text style={styles.sectionTitle}>🔧 Popular Services</Text>
-            <Pressable onPress={() => navigation.navigate('Services')}>
-              <Text style={styles.seeAll}>See All →</Text>
-            </Pressable>
-          </View>
-
-          <FlatList
-            horizontal
-            data={trendingServices}
-            keyExtractor={(item, index) => item?.id || `service-${index}`}
-            renderItem={({ item }) => <TrendingCard item={item} variant="service" />}
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={styles.listContent}
-          />
-        </View>
+        <View style={{ height: 100 }} />
       </ScrollView>
-
-      <PermissionModal {...permissionModalProps} />
-    </>
+    </SafeAreaView>
   );
-};
+}
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#f8fbfb',
-    paddingHorizontal: 20,
-    paddingTop: 26,
-  },
-  prompt: {
-    fontSize: 22,
-    lineHeight: 30,
-    color: '#0f172a',
-    fontWeight: '700',
-  },
-  subtext: {
-    marginTop: 8,
-    color: '#64748b',
-    fontSize: 14,
-  },
+const st = StyleSheet.create({
+  safe: { flex: 1, backgroundColor: '#f7f6f2' },
+  hdr: { paddingHorizontal: 20, paddingTop: 20, paddingBottom: 16 },
+  greet: { fontSize: 22, fontWeight: '700', color: '#28251d' },
+  tag: { fontSize: 13, color: '#7a7974', marginTop: 2 },
+  banners: { paddingHorizontal: 20, gap: 12 },
+  ban: { borderRadius: 16, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14, elevation: 3, marginBottom: 4 },
+  emoji: { fontSize: 28 },
+  btxt: { flex: 1 },
+  btitle: { fontSize: 16, fontWeight: '700', color: '#fff' },
+  bsub: { fontSize: 12, color: 'rgba(255,255,255,0.8)', marginTop: 2 },
+  cta: { backgroundColor: '#fff', paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20 },
+  ctaTxt: { fontSize: 12, fontWeight: '600', color: '#28251d' },
+  sec: { marginTop: 24, paddingHorizontal: 20 },
+  secH: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 },
+  secT: { fontSize: 16, fontWeight: '700', color: '#28251d' },
+  seeAll: { fontSize: 13, color: '#01696f', fontWeight: '600' },
+  card: { width: 170, marginRight: 12, backgroundColor: '#fff', borderRadius: 12, overflow: 'hidden', elevation: 2 },
+  cardTop: { padding: 14, minHeight: 75 },
+  cardTitle: { fontSize: 13, fontWeight: '600', color: '#fff' },
+  cardPrice: { fontSize: 14, fontWeight: '700', color: '#fff', marginTop: 6 },
+  cardBot: { padding: 10 },
+  cardLoc: { fontSize: 11, color: '#7a7974' },
 });
-    backgroundColor: BG,
-  },
-  scrollContent: {
-    paddingBottom: 40,
-  },
-  headerSection: {
-    backgroundColor: TEAL_DARK,
-    paddingTop: SB_HEIGHT + 12,
-    paddingHorizontal: 20,
-    paddingBottom: 24,
-  },
-  logoRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  logoText: {
-    fontSize: 28,
-    marginRight: 4,
-    fontWeight: '900',
-  },
-  logoNest: {
-    color: '#FFFFFF',
-    fontSize: 28,
-    fontWeight: '900',
-  },
-  logoUp: {
-    color: GOLD,
-    fontSize: 28,
-    fontWeight: '900',
-  },
-  tagline: {
-    marginTop: 4,
-    color: 'rgba(255,255,255,0.8)',
-    fontSize: 13,
-  },
-  greeting: {
-    marginTop: 20,
-    color: '#FFFFFF',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  categoriesSection: {
-    paddingHorizontal: 16,
-    marginTop: 20,
-    gap: 12,
-  },
-  section: {
-    marginTop: 22,
-  },
-  sectionHeader: {
-    paddingHorizontal: 16,
-    marginBottom: 12,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  sectionTitle: {
-    fontSize: 18,
-    fontWeight: '700',
-    color: '#111827',
-  },
-  seeAll: {
-    color: TEAL,
-    fontWeight: '700',
-  },
-  listContent: {
-    paddingHorizontal: 16,
-    gap: 12,
-  },
-});
-
-export { HomeScreen };
-export default HomeScreen;

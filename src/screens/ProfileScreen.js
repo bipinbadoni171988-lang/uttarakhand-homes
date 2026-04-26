@@ -1,11 +1,11 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 
-export default function RentalsScreen() {
+export default function ProfileScreen() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Rentals</Text>
-      <Text style={styles.sub}>Listings coming soon</Text>
+      <Text style={styles.title}>Profile</Text>
+      <Text style={styles.sub}>Coming Soon</Text>
     </View>
   );
 }
