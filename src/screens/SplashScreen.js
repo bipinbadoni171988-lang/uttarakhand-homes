@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect } from 'react';
 import { View, Text, StyleSheet, Animated } from 'react-native';
 
@@ -22,10 +23,24 @@ export default function SplashScreen({ navigation }) {
         <Text style={st.tagline}>Property • Rentals • Services</Text>
       </Animated.View>
       <Text style={st.footer}>Uttarakhand's #1 Local Marketplace</Text>
+=======
+import React from 'react';
+import { View, Text, StyleSheet } from 'react-native';
+import NestupLogo from './NestupLogo';
+import { COLORS, FONTS } from '../constants/theme';
+
+export default function SplashScreen() {
+  return (
+    <View style={styles.root}>
+      <NestupLogo size={88} variant="light" />
+      <Text style={styles.wordmark}>Nestup</Text>
+      <Text style={styles.subtag}>Find Your Space</Text>
+>>>>>>> 902490acad43c647976c8c03bf85fbabf67f5c23
     </View>
   );
 }
 
+<<<<<<< HEAD
 const st = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#01696f', alignItems: 'center', justifyContent: 'center' },
   logoBox: { alignItems: 'center' },
@@ -35,3 +50,29 @@ const st = StyleSheet.create({
   tagline: { fontSize: 13, color: 'rgba(255,255,255,0.8)', marginTop: 8, letterSpacing: 1 },
   footer: { position: 'absolute', bottom: 40, fontSize: 12, color: 'rgba(255,255,255,0.6)' },
 });
+=======
+const styles = StyleSheet.create({
+  root: {
+    flex: 1,
+    backgroundColor: COLORS.primary,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  wordmark: {
+    fontSize: 36,
+    color: '#fff',
+    marginTop: 24,
+    fontFamily: FONTS.heading,
+    fontWeight: '700',
+    letterSpacing: 1.0,
+  },
+  subtag: {
+    fontSize: 18,
+    color: 'rgba(255,255,255,0.8)',
+    fontFamily: FONTS.body,
+    marginTop: 8,
+    fontWeight: '400',
+    letterSpacing: 0.4,
+  }
+});
+>>>>>>> 902490acad43c647976c8c03bf85fbabf67f5c23

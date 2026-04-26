@@ -1,6 +1,7 @@
+// Enhanced only the _styles_ to use new design tokens and fonts
 import React from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { TEAL } from '../constants/theme';
+import { COLORS, SPACING, RADIUS, FONTS } from '../constants/theme';
 
 export const ChipSelect = ({ options = [], value, onChange }) => {
   return (
@@ -35,32 +36,33 @@ export const ChipSelect = ({ options = [], value, onChange }) => {
 
 const styles = StyleSheet.create({
   container: {
-    paddingVertical: 4,
+    paddingVertical: SPACING.xs,
   },
   chip: {
-    borderRadius: 999,
-    paddingVertical: 10,
-    paddingHorizontal: 14,
+    borderRadius: RADIUS.pill,
+    paddingHorizontal: SPACING.md,
+    paddingVertical: 8,
+    borderWidth: 1,
+    marginBottom: SPACING.xs,
   },
-  chipSpacing: {
-    marginRight: 8,
-  },
+  chipSpacing: { marginRight: SPACING.sm },
   activeChip: {
-    backgroundColor: TEAL,
+    backgroundColor: COLORS.primary,
+    borderColor: COLORS.primary,
   },
   inactiveChip: {
-    backgroundColor: '#f4f6f8',
-    borderWidth: 1,
-    borderColor: '#e0e0e0',
+    backgroundColor: COLORS.background,
+    borderColor: COLORS.border,
   },
   chipText: {
-    fontSize: 14,
+    fontFamily: FONTS.body,
     fontWeight: '600',
+    fontSize: 15,
   },
   activeChipText: {
-    color: '#fff',
+    color: "#fff",
   },
   inactiveChipText: {
-    color: '#555',
+    color: COLORS.text,
   },
 });
